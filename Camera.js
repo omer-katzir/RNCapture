@@ -1,6 +1,5 @@
-// @flow
-import {RNCamera} from 'react-native-camera';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import { RNCamera } from 'react-native-camera';
+import { Button, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import { PhotoData, PhotoSource } from './types';
 
@@ -45,7 +44,7 @@ class Camera extends React.Component<Props> {
 	}
 
 	takePicture = async camera => {
-		const options = {quality: 0.5, base64: true};
+		const options = { quality: 1, base64: true };
 		const { width, height, uri, orientation, deviceOrientation } = await camera.takePictureAsync(options);
 		const photoData: PhotoData = {
 			uri,

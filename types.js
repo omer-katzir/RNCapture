@@ -1,5 +1,3 @@
-// @flow
-
 export type PhotoData = $ReadOnly<{
 	uri: string,
 	width: number,

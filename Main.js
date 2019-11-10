@@ -4,7 +4,7 @@ import CachedImage from 'react-native-image-cache-wrapper';
 import Camera from './Camera';
 import ImagePickerLauncher from './ImagePickerLauncher';
 import PhotosListView from './PhotosListView';
-import type { PhotoData, PhotosDelegate, PhotoSource} from 'types';
+import type { PhotosDelegate, PhotoSource} from 'types';
 import PhotoPreview from './photoPreview';
 
 const images = [
