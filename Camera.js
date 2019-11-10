@@ -47,7 +47,13 @@ class Camera extends React.Component<Props> {
 	takePicture = async camera => {
 		const options = {quality: 0.5, base64: true};
 		const { width, height, uri, orientation, deviceOrientation } = await camera.takePictureAsync(options);
-		const photoData: PhotoData = { width, height, uri, orientation, deviceOrientation };
+		const photoData: PhotoData = {
+			uri,
+			width,
+			height,
+			orientation,
+			deviceOrientation,
+		};
 		this.props.delegate.onAddPhoto(photoData);
 	};
 }

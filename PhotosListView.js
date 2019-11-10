@@ -1,13 +1,17 @@
 // @flow
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Linking } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import type { PhotoSource } from './types';
-import CachedImage from 'react-native-image-cache-wrapper';
 
-export default ({ source }: { source: PhotoSource }) => {
+type Props = $ReadOnly<{|
+	onPhotoPressed?: index => void;
+	...PhotoSource,
+|}>;
+
+export default (props: Props) => {
+	const { source, onPhotoPressed } = props;
 	const photos = source.getPhotosList();
-	console.log(photos);
 	return (
 		<ScrollView
 			horizontal
@@ -17,10 +21,10 @@ export default ({ source }: { source: PhotoSource }) => {
 				{photos &&
 					photos.map((data, i) => (
 						<View key={i} style={styles.sectionContainer}>
-							<TouchableOpacity onPress={() => { Linking.openURL(data.uri) }}>
+							<TouchableOpacity onPress={ onPhotoPressed ? () => onPhotoPressed(i) : null }>
 								<Text style={styles.sectionTitle}>{i}</Text>
 							</TouchableOpacity>
-							<CachedImage
+							<Image
 								style={styles.image}
 								source={{ uri: data.uri, cache: 'only-if-cached' }}
 								activityIndicator
@@ -36,7 +40,6 @@ const styles = StyleSheet.create({
 	image: {
 		flex: 1,
 		flexDirection: 'column',
-		justifyContent: 'flex-start',
 		width: 90,
 		height: 50,
 	},

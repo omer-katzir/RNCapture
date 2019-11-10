@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import CachedImage from 'react-native-image-cache-wrapper';
 import Camera from './Camera';
 import ImagePickerLauncher from './ImagePickerLauncher';
 import PhotosListView from './PhotosListView';
-import type { PhotosDelegate, PhotoSource } from 'types';
+import type { PhotoData, PhotosDelegate, PhotoSource} from 'types';
+import PhotoPreview from './photoPreview';
 
 const images = [
 	{ uri: "https://homepages.cae.wisc.edu/~ece533/images/zelda.png", width:400, height: 400},
@@ -17,30 +19,69 @@ const images = [
 
 export default class Main extends React.Component
 	implements PhotosDelegate, PhotoSource {
+
 	constructor(props) {
 		super(props);
-		this.state = {
-			photos: images,
-		};
 		this.onAddPhoto = this.onAddPhoto.bind(this);
+		this.state = {
+			photos: [],
+			previewIndex: -1,
+		};
+		images.forEach(data => this.onAddPhoto(data));
 	}
 
-	onAddPhoto(photoData) {
+	async onAddPhoto(photoData) {
+		let uri = photoData.uri;
+		let size = { width: photoData.width, height: photoData.height };
+		const remoteUri = uri.includes('http://') || uri.includes('https://');
+		if (remoteUri) {
+			console.log(uri);
+			uri = await CachedImage.getCacheFilename(uri);
+			await CachedImage.getSize(uri, size_ => {
+				size = size_;
+			});
+		}
+		const data = {
+			...photoData,
+			uri,
+			...size,
+		};
+		console.log(data);
+
 		const photos = [...this.state.photos];
-		photos.push(photoData);
-		this.setState({ photos: photos });
+		photos.push(data);
+		this.setState({ ...this.state, photos: photos });
 	}
 
 	getPhotosList = () => {
 		return this.state.photos;
 	};
 
+	setPreviewIndex = index => {
+		this.setState({
+			...this.state,
+			previewIndex: index,
+		});
+	};
+
 	render() {
+		console.log(this.state.previewIndex);
 		return (
 			<View style={styles.container}>
 				<Camera style={styles.camera} delegate={this} />
 				<ImagePickerLauncher style={styles.imagePicker} delegate={this} />
-				<PhotosListView style={styles.photoList} source={this} />
+				<PhotosListView
+					style={styles.photoList}
+					source={this}
+					onPhotoPressed={this.setPreviewIndex}
+				/>
+				{this.state.previewIndex >= 0 && (
+					<PhotoPreview
+						source={this}
+						startIndex={this.state.previewIndex}
+						onClose={() => this.setPreviewIndex(-1)}
+					/>
+				)}
 			</View>
 		);
 	}

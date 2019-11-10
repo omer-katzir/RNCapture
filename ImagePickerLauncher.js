@@ -4,7 +4,6 @@ import ImagePicker from 'react-native-image-picker';
 import { Button, StyleSheet, View } from 'react-native';
 import type { PhotoData, PhotoSource } from './types';
 
-
 type Props = PhotoSource;
 
 export default class ImagePickerLauncher extends React.Component<Props> {
